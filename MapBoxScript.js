@@ -1,3 +1,7 @@
+var zoomLevel = 12;
+
+
+
 mapboxgl.accessToken = 'pk.eyJ1IjoiaW5pZGV3aW4iLCJhIjoiY2w3MGo5ZGdwMGV6NDN4czl6NW41NGI0YyJ9.j7Bdi3mRI3ADKM9AJDB-wg';
 
 navigator.geolocation.getCurrentPosition(successLocation, errorLocation,{ enableHighAccuracy: true });
@@ -17,7 +21,7 @@ function setUpMap(center) {
         container: 'map',
         style: 'mapbox://styles/inidewin/cl70kiejf004j14o2iyxe4mqi',
         center: center,
-        zoom: 12,
+        zoom: zoomLevel,
     });
 
     // add markers to map
@@ -71,5 +75,13 @@ const geojson = {
 };
 
 
+onwheel = (event) => { 
+    console.log("zooom");
+};
 
+/*
+Android zoom level:
+int currentZoomLevel = mapboxMap.getCameraPosition().zoom;
+
+*/
 
