@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyMapApp</title>
+
+    <style>
+        :root {
+            --TestBG: url("test1.jpg");
+            --mask: url("mask-img.png");
+        }
+
+
+        body {
+            margin: 0;
+        }
+
+        #map {
+            height: 100%;
+            width: 100%;
+            position: absolute;
+            z-index: -1;
+        }
+
+        .marker {
+            background-image: url('mapbox-icon.png');
+            background-size: cover;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .mapboxgl-popup {
+            max-width: 200px;
+        }
+
+        .mapboxgl-popup-content {
+            text-align: center;
+            font-family: 'Open Sans', sans-serif;
+        }
+
+
+
+        #OverlayContainer {
+            z-index: 1;
+        }
+
+        #MenueContainer {
+            background: rgb(255, 255, 255);
+            position: absolute;
+            z-index: 3;
+            width: 100%;
+            height: 50px;
+
+            font-family: 'Open Sans', sans-serif;
+
+            box-shadow:
+                0 2.8px 2.2px rgba(0, 0, 0, 0.034),
+                0 6.7px 5.3px rgba(0, 0, 0, 0.048),
+                0 12.5px 10px rgba(0, 0, 0, 0.06),
+                0 22.3px 17.9px rgba(0, 0, 0, 0.072),
+                0 41.8px 33.4px rgba(0, 0, 0, 0.086),
+                0 100px 80px rgba(0, 0, 0, 0.12);
+        }
+
+
+        #FogOfWar {
+            width: 300px;
+            height: 300px;
+            position: absolute;
+            top: 80px;
+            left: 320px;
+            z-index: 8;
+
+            /*
+            mask-image: radial-gradient(black 30%, rgba(0, 0, 0, 0));
+            mask-image: url(mask-img.png);
+            mask-size: 70%;
+            */
+        }
+
+
+
+        .drawingTest_cont {
+            position: absolute;
+            z-index: 2;
+        }
+    </style>
+    <script src="drawingTest.js" defer></script>
+    <script src="script.js" defer></script>
+
+
+
+    <script src='https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.css' rel='stylesheet' />
+
+</head>
+
+<body>
+    <div id="OverlayContainer">
+        <nav id="MenueContainer"></nav>
+
+        <!--This container is "under" the map, invisible-->
+        <div class="drawingTest_cont" style="z-index: -5;">
+            <canvas id="drawingTest"></canvas>
+        </div>
+
+        <div class="drawingTest_cont">
+            <canvas id="drawingResult" ></canvas>
+        </div>
+
+        <!--<img scr="test1.jpg" width="100px" class="SoonMaskedImg" id="masktarget">-->
+
+        <!-- <canvas id="FogOfWar"></canvas>-->
+
+    </div>
+    <div id='map'></div>
+
+
+
+</body>
+
+</html>
