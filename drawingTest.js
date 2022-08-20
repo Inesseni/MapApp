@@ -106,4 +106,8 @@ function clearMask(){
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 }
 
+function AddNewPointToMask(){
+
+}
+
 setNewImgMask();

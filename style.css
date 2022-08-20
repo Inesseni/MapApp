@@ -15,6 +15,69 @@
     --fs-h3: 1.25rem;
     --fs-body: 1rem;
 
-    --bs: 0.25em 0.25em .75em rgba(0,0,0,.25),
-          0.125em 0.125em .25em rgba(0,0,0,.15);    /*double shadow for more realism*/
+    --bs:        0 2.8px 2.2px rgba(0, 0, 0, 0.034),
+    0 6.7px 5.3px rgba(0, 0, 0, 0.048),
+    0 12.5px 10px rgba(0, 0, 0, 0.06),
+    0 22.3px 17.9px rgba(0, 0, 0, 0.072),
+    0 41.8px 33.4px rgba(0, 0, 0, 0.086),
+    0 100px 80px rgba(0, 0, 0, 0.12);   
+
+    --TestBG: url("img/test1.jpg");
+    --mask: url("img/mask-img.png");
+}
+
+
+
+body {
+    margin: 0;
+}
+
+#map {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    z-index: -1;
+}
+
+.marker {
+    background-image: url('img/mapbox-icon.png');
+    background-size: cover;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.mapboxgl-popup {
+    max-width: 200px;
+}
+
+.mapboxgl-popup-content {
+    text-align: center;
+    font-family: 'Open Sans', sans-serif;
+}
+
+
+
+#OverlayContainer {
+    z-index: 1;
+}
+
+#MenueContainer {
+    background: rgb(255, 255, 255);
+    position: absolute;
+    z-index: 3;
+    width: 100%;
+    height: 50px;
+
+    font-family: 'Open Sans', sans-serif;
+
+    box-shadow: var(--bs);
+}
+
+
+
+.drawingTest_cont {
+    position: absolute;
+    z-index: 2;
 }
