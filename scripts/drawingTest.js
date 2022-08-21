@@ -1,21 +1,22 @@
-// create canvas element and append it to document body
-//var canvas = document.createElement('canvas');
-//document.body.appendChild(canvas);
+
+var can = document.getElementById('drawingTest');
+can.style.position = 'fixed';
+can.onselectstart = function () { return false; }
+var ctx = can.getContext('2d');
 
 var resultCanvas = document.getElementById('drawingResult');
 var resultCTX = resultCanvas.getContext('2d');
 
 
+var dotOffset = 30;
 
-var can = document.getElementById('drawingTest');
-can.onselectstart = function () { return false; }
 // some hotfixes... ( ≖_≖)
-//document.body.style.margin = 0;
-can.style.position = 'fixed';
+document.body.style.margin = 0;
 
 // get canvas 2D context and set him correct size
-var ctx = can.getContext('2d');
 resize();
+
+
 
 // last known position
 var pos = { x: 0, y: 0 };
@@ -39,6 +40,9 @@ function resize() {
 
 }
 
+
+
+///Draw a path with the mouse (debug only)
 function draw(e) {
 
     // mouse left button must be pressed (0 is none, 1 is left and 2 is right)
@@ -62,17 +66,33 @@ function draw(e) {
 }
 
 
-function copyToAnotherCanvas() {
+// Add points to the mask based on GPS Marker
+function AddNewPointToMask(AllMarkerPositions) {
+    for (let i = 0; i < AllMarkerPositions.length; i++) {
+        const element = AllMarkerPositions[i];
 
-    var imgData = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height);
-    var resultCanvas = document.getElementById('drawingResult');
-    var resultCTX = resultCanvas.getContext('2d');
 
-    resultCTX.canvas.width = ctx.canvas.width;
-    resultCTX.canvas.height = ctx.canvas.width;
 
-    resultCTX.putImageData(imgData, 0, 0);
+        const markerX = element[0];
+        const markerY = element[1];
+        
+        offsettedX = markerX + dotOffset;
+        offsettedY = markerY + dotOffset;
+        //console.log(x , y);
+
+        ctx.lineWidth = 100;
+        ctx.lineCap = 'round';
+        ctx.strokeStyle = 'white';
+
+        ctx.beginPath();
+        ctx.moveTo(offsettedX, offsettedY);
+        ctx.lineTo(offsettedX + 0.4, offsettedY + 0.4);
+        ctx.stroke();
+
+        setNewImgMask();
+    }
 }
+
 
 function setNewImgMask() {
 
@@ -115,8 +135,24 @@ function clearMask() {
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 }
 
-function AddNewPointToMask() {
 
-}
+
 
 setNewImgMask();
+
+
+
+
+/*
+function copyToAnotherCanvas() {
+
+    var imgData = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height);
+    var resultCanvas = document.getElementById('drawingResult');
+    var resultCTX = resultCanvas.getContext('2d');
+
+    resultCTX.canvas.width = ctx.canvas.width;
+    resultCTX.canvas.height = ctx.canvas.width;
+
+    resultCTX.putImageData(imgData, 0, 0);
+}
+*/

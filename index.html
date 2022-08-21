@@ -10,9 +10,9 @@
     <script src='https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.js'></script>
     <link href='https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.css' rel='stylesheet' />
     
-        <link rel="stylesheet" href="style.css">
-        <script src="drawingTest.js" defer></script>
-        <script src="MapBoxScript.js" defer></script>
+        <link rel="stylesheet" href="css/style.css">
+        <script src="scripts/drawingTest.js" defer></script>
+        <script src="scripts/MapBoxScript.js" defer></script>
 </head>
 
 <body>
@@ -21,7 +21,7 @@
 
         <!--This container is "under" the map, invisible-->
         <div class="drawingTest_cont" style="z-index: -5;">
-            <canvas id="drawingTest"></canvas>
+            <canvas id="drawingTest"onContextMenu="return false;"></canvas>
         </div>
 
         <div class="drawingTest_cont">
@@ -30,7 +30,7 @@
 
     </div>
 
-    <div id='map'></div>
+    <div id='map'onContextMenu="return false;"></div>
 
 </body>
 
