@@ -48,6 +48,14 @@ body {
     cursor: pointer;
 }
 
+.waypointMarker{
+    background-image: url('../img/mapbox-icon.png');
+    background-size: cover;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+}
+
 .mapboxgl-popup {
     max-width: 200px;
 }
@@ -55,10 +63,7 @@ body {
 .mapboxgl-popup-content {
     text-align: center;
     font-family: 'Open Sans', sans-serif;
-
 }
-
-
 
 #OverlayContainer {
     z-index: 1;
@@ -82,4 +87,5 @@ body {
     position: absolute;
     z-index: 2;
     pointer-events: none;
+    filter: blur(5px);
 }

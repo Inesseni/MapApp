@@ -9,6 +9,7 @@ var resultCTX = resultCanvas.getContext('2d');
 
 
 var dotOffset = 30;
+var dotSize = 100;
 
 // some hotfixes... ( ≖_≖)
 document.body.style.margin = 0;
@@ -25,6 +26,7 @@ window.addEventListener('resize', resize);
 document.addEventListener('mousemove', draw);
 document.addEventListener('mousedown', setPosition);
 document.addEventListener('mouseenter', setPosition);
+//document.addEventListener('mouseup', clearMask);
 
 
 // new position from mouse event
@@ -38,36 +40,22 @@ function resize() {
     ctx.canvas.width = window.innerWidth;
     ctx.canvas.height = window.innerHeight;
 
-}
-
-
-
-///Draw a path with the mouse (debug only)
-function draw(e) {
-
-    // mouse left button must be pressed (0 is none, 1 is left and 2 is right)
-    if (e.buttons !== 2) return;
-
-    ctx.beginPath(); // begin
-
-
-    ctx.lineWidth = 100;
-    ctx.lineCap = 'round';
-    ctx.strokeStyle = 'white';
-
-    ctx.moveTo(pos.x, pos.y); // from
-    setPosition(e);
-    ctx.lineTo(pos.x, pos.y); // to
-
-    ctx.stroke(); // draw it!
-
-    setNewImgMask();
+    resultCTX.canvas.width = ctx.canvas.width;
+    resultCTX.canvas.height = ctx.canvas.height;
 
 }
 
 
 // Add points to the mask based on GPS Marker
-function AddNewPointToMask(AllMarkerPositions) {
+function AddNewPointToMask(AllMarkerPositions, zoomLevel) {
+
+    //clear old mask and create new one
+    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+
+    //adjust the radius based on zoom level (wip)
+    //radius = (dotSize / zoomLevel);
+    //console.log(radius);
+
     for (let i = 0; i < AllMarkerPositions.length; i++) {
         const element = AllMarkerPositions[i];
 
@@ -80,7 +68,7 @@ function AddNewPointToMask(AllMarkerPositions) {
         offsettedY = markerY + dotOffset;
         //console.log(x , y);
 
-        ctx.lineWidth = 100;
+        ctx.lineWidth = dotSize;
         ctx.lineCap = 'round';
         ctx.strokeStyle = 'white';
 
@@ -111,32 +99,30 @@ function setNewImgMask() {
             imageData[p + b] == 255) // if white then change alpha to 0
         { imageData[p + a] = 0; }
         else {
-            imageData[p + a] = 200;
+            imageData[p + r] = 255;
+            imageData[p + g] = 255;
+            imageData[p + b] = 255;
+            imageData[p + a] = 230;
         }
     }
-
-    resultCTX.canvas.width = ctx.canvas.width;
-    resultCTX.canvas.height = ctx.canvas.height;
-
-    // after the manipulation, reset the data
-    image.data = imageData;
 
 
     resultCanvas.onselectstart = function () { return false; }
 
-
-
-
+    // after the manipulation, reset the data
+    image.data = imageData;
     // and put the imagedata to the new canvas (the fog of war)
     resultCTX.putImageData(image, 0, 0);
 }
 
 function clearMask() {
+
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    resultCTX.clearRect(0, 0, resultCTX.canvas.width, resultCTX.canvas.height);
+
+    
+    setNewImgMask();
 }
-
-
-
 
 setNewImgMask();
 
@@ -156,3 +142,25 @@ function copyToAnotherCanvas() {
     resultCTX.putImageData(imgData, 0, 0);
 }
 */
+
+///Draw a path with the mouse (debug only)
+function draw(e) {
+
+    // mouse left button must be pressed (0 is none, 1 is left and 2 is right)
+    if (e.buttons !== 2) return;
+
+    ctx.beginPath(); // begin
+
+
+    ctx.lineWidth = 100;
+    ctx.lineCap = 'round';
+    ctx.strokeStyle = 'white';
+
+    ctx.moveTo(pos.x, pos.y); // from
+    setPosition(e);
+    ctx.lineTo(pos.x, pos.y); // to
+
+    ctx.stroke(); // draw it!
+
+    setNewImgMask();
+}

@@ -1,7 +1,9 @@
-var zoomLevel = 15;
+var initZoomLevel = 12;
 MarkerPositions = [];
 var myPosX = null;
 var myPosY = null;
+var updateDelay = 50;
+var positionCheck = true;
 
 
 
@@ -25,9 +27,9 @@ function errorLocation() {
 function setUpMap(center) {
     var map = new mapboxgl.Map({
         container: 'map',
-        style: 'mapbox://styles/inidewin/cl70kiejf004j14o2iyxe4mqi',
+        style: 'mapbox://styles/inidewin/cl73a2tzf000g14mkpcjk9wyr',
         center: center,
-        zoom: zoomLevel,
+        zoom: initZoomLevel,
     });
 
 
@@ -69,12 +71,6 @@ function setUpMap(center) {
                 .addTo(map);
         }
 
-
-
-
-
-
-
         map.on('render', (function () {
             function intersectRect(r1, r2) {
                 return !(r2.left > r1.right ||
@@ -83,7 +79,13 @@ function setUpMap(center) {
                     r2.bottom < r1.top);
             }
 
+
+
+
             function getVisibleMarkers() {
+
+                
+
                 var cc = map.getContainer();
                 var els = cc.getElementsByClassName('marker');
                 var ccRect = cc.getBoundingClientRect();
@@ -91,7 +93,6 @@ function setUpMap(center) {
 
 
                 for (var i = 0; i < els.length; i++) {
-
                     var el = els.item(i);
                     var elRect = el.getBoundingClientRect();
                     intersectRect(ccRect, elRect) && visibles.push(el);
@@ -99,29 +100,49 @@ function setUpMap(center) {
 
                 if (visibles.length > 0) {
 
+                    //get every visible marker...
                     for (let visibleMarker = 0; visibleMarker < visibles.length; visibleMarker++) {
                         const el = visibles[visibleMarker];
 
+                        //...save their position on the screen...
                         var xPos = el.getBoundingClientRect().x;
                         var yPos = el.getBoundingClientRect().y;
-
                         const screenPos = [xPos, yPos];
+
+                        //.. and add these to an array of visible markers.
                         MarkerPositions.push(screenPos);
 
-                        AddNewPointToMask(MarkerPositions);
+                        //get zoom level to adjust dot size
+                        var zoom = map.getZoom();
+
+                        //Clear mask, Add dots for the visible markers and rerender it (drawingTest.js)
+                        AddNewPointToMask(MarkerPositions, zoom);
                     }
 
-
-                    //console.log(visibles);
+                    //clear Array of all points after rendering them on the new mask
+                    MarkerPositions = [];
                 }
             }
 
+            //defines how often it re-fetchess visible markers
             var tm;
             return function () {
                 clearTimeout(tm);
-                tm = setTimeout(getVisibleMarkers, 50);
+                tm = setTimeout(getVisibleMarkers, updateDelay);
             }
         }()))
+
+
+        //Update map super fast when moved or zoomed
+        map.on('movestart', () => {
+            updateDelay = 0;
+            positionCheck = false;
+        });
+        //and very slow when not interacted
+        map.on('moveend', () => {
+            updateDelay = 100;
+            positionCheck = true;
+        });
     }
 }
 
@@ -157,12 +178,44 @@ const geojson = {
 
 
 
+/*Next step:
+- for debug purposes, add a new WAYPOINT marker by clicking on the map, it should be styled differently
+- Check min distance btween current Positon and every other visible marker, only place it if min distance is reached
+- instead of clicking, check the distance every 5 seconds and add a new point then
+- Maybe clamp zoom, or look into Marker clustering to get around rendering 100000000000 Markers at the same time (or creating polygons ?)
+- Save Waypoints you added by clicking (in local storage? api??)
+- maybe Menue ? eg. (change map style, change DotRadius/merge distance )
+- adjust dot size based on zoom (smaller when zoomed out)
 
-onwheel = (event) => {
-    //console.log("zooom");
-};
+- make Android app instead :)
+*/
 
+/*
+var intervalId = window.setInterval(function () {
+    /// call your function here ,stop the loop:  clearInterval(intervalId) 
+    console.log("check if position has changed");
 
+    getDistanceFromLatLonInKm();
+}, 5000);
+*/
+
+function getDistanceFromLatLonInKm(myPosX, myPosY, lat2, lon2) {
+    var R = 6371; // Radius of the earth in km
+    var dLat = deg2rad(lat2 - lat1);  // deg2rad below
+    var dLon = deg2rad(lon2 - lon1);
+    var a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+        Math.sin(dLon / 2) * Math.sin(dLon / 2)
+        ;
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    var d = R * c; // Distance in km
+    return d;
+}
+
+function deg2rad(deg) {
+    return deg * (Math.PI / 180)
+}
 
 
 /*
