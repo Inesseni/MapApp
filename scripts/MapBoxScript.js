@@ -1,5 +1,6 @@
 var initZoomLevel = 12;
 MarkerPositions = [];
+Waypoints = [];
 var myPosX = null;
 var myPosY = null;
 var updateDelay = 50;
@@ -11,9 +12,8 @@ mapboxgl.accessToken = 'pk.eyJ1IjoiaW5pZGV3aW4iLCJhIjoiY2w3MGo5ZGdwMGV6NDN4czl6N
 
 navigator.geolocation.getCurrentPosition(successLocation, errorLocation, { enableHighAccuracy: true });
 
-//
+
 function successLocation(position) {
-    //console.log(position);
     myPosX = position.coords.longitude;
     myPosY = position.coords.latitude;
 
@@ -40,34 +40,53 @@ function setUpMap(center) {
     el.className = 'marker';
 
 
+
+    map.on('click', function (e) {
+        addMarkerToMap(e);
+        function addMarkerToMap(e) {
+            var coordinates = e.lngLat;
+            const el = document.createElement('div');
+            el.className = 'waypointMarker';
+
+            new mapboxgl.Marker(el)
+                .setLngLat(coordinates)
+                .addTo(map);
+
+            Waypoints.push(coordinates);
+
+
+        }
+
+    });
+
+
     // add markers to map
     for (const feature of geojson.features) {
         // create a HTML element for each feature
         const el = document.createElement('div');
-        el.className = 'marker';
 
 
-        //add USER Marker to map
+
         if (feature.properties.title == "ME") {
-
+            el.className = 'marker';
+            //add USER Marker to map
             new mapboxgl.Marker(el).setLngLat(center)
                 .setPopup(
                     new mapboxgl.Popup({ offset: 25 }) // add popups
                         .setHTML(
-                            `<h3>${feature.properties.title}</h3><p>${feature.properties.description}</p>`
+                            `
+                            <h3>${feature.properties.title}</h3>
+                            <p>${feature.properties.description}</p>
+                            
+                            `
                         )
                 )
                 .addTo(map);
         } else {
-            // add WAYPOINT Markers ont eh Map
+            el.className = 'waypointMarker';
+            // add WAYPOINT Markers on the Map
             new mapboxgl.Marker(el)
                 .setLngLat(feature.geometry.coordinates)
-                .setPopup(
-                    new mapboxgl.Popup({ offset: 25 }) // add popups
-                        .setHTML(
-                            `<h3>${feature.properties.title}</h3><p>${feature.properties.description}</p>`
-                        )
-                )
                 .addTo(map);
         }
 
@@ -79,15 +98,10 @@ function setUpMap(center) {
                     r2.bottom < r1.top);
             }
 
-
-
-
+            //
             function getVisibleMarkers() {
-
-                
-
                 var cc = map.getContainer();
-                var els = cc.getElementsByClassName('marker');
+                var els = cc.getElementsByClassName('waypointMarker');
                 var ccRect = cc.getBoundingClientRect();
                 var visibles = [];
 
@@ -118,6 +132,7 @@ function setUpMap(center) {
                         //Clear mask, Add dots for the visible markers and rerender it (drawingTest.js)
                         AddNewPointToMask(MarkerPositions, zoom);
                     }
+
 
                     //clear Array of all points after rendering them on the new mask
                     MarkerPositions = [];
@@ -178,8 +193,53 @@ const geojson = {
 
 
 
+/////LOAD AND SAVE WIP
+
+function saveAllMarkers() {
+
+    //waypoints = e.longLat
+    console.log("saving: " + Waypoints);
+    for (i = 0; i < Waypoints.length; i++) {
+        var key = "Wayp" + [i].toString();
+        window.localStorage.setItem(key, Waypoints[i]);
+    }
+}
+
+function loadAllMarkers() {
+    var values = [], 
+    keys = Object.keys(localStorage), 
+    i = keys.length;
+
+    while (i--) {
+        values.push(localStorage.getItem(keys[i]));
+    }
+   
+
+    for(i = 1; i<values.length; i++){
+
+        longit = [values[i].longitude,values[i].latitude ];
+        //WP = {values[i].LngLat}
+        console.log(longit);
+
+
+        //add a marker to the map again for every stored coordinate
+        const el = document.createElement('div');
+        el.className = 'waypointMarker';
+    
+        new mapboxgl.Marker(el)
+            .setLngLat(coordinates) //???????
+            .addTo(map);
+    
+        Waypoints.push(values[i]);
+    
+        console.log(Waypoints);
+    }
+
+}
+
+
 /*Next step:
-- for debug purposes, add a new WAYPOINT marker by clicking on the map, it should be styled differently
+- Map extremly lags with more than 5 Waypoints. Find different (render?) solution
 - Check min distance btween current Positon and every other visible marker, only place it if min distance is reached
 - instead of clicking, check the distance every 5 seconds and add a new point then
 - Maybe clamp zoom, or look into Marker clustering to get around rendering 100000000000 Markers at the same time (or creating polygons ?)

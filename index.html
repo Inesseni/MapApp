@@ -14,11 +14,15 @@
         <link rel="stylesheet" href="css/style.css">
         <script src="scripts/drawingTest.js" defer></script>
         <script src="scripts/MapBoxScript.js" defer></script>
+        <!--<script src="scripts/save_load.js" defer></script>-->
 </head>
 
 <body>
     <div id="OverlayContainer">
-        <nav id="MenueContainer"></nav>
+        <nav id="MenueContainer">
+            <button onclick="saveAllMarkers()">Save</button>
+            <button onclick="loadAllMarkers()">Load</button>
+        </nav>
 
         <!--This container is "under" the map, invisible-->
         <div class="drawingTest_cont" style="z-index: -5;">
@@ -28,6 +32,13 @@
         <div class="drawingTest_cont">
             <canvas id="drawingResult" onContextMenu="return false;" ></canvas>
         </div>
+<!--
+        <div class="AddPopUp">
+            <p>Leave a thing :)</p>
+            <button>Leave message</button>
+            <button>Leave photo</button>
+            <button>Leave point</button>
+        </div>-->
 
     </div>
 

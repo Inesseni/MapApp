@@ -24,6 +24,8 @@
 
     --TestBG: url("img/test1.jpg");
     --mask: url("img/mask-img.png");
+
+    --dotBlur: 5px;
 }
 
 
@@ -49,7 +51,7 @@ body {
 }
 
 .waypointMarker{
-    background-image: url('../img/mapbox-icon.png');
+    
     background-size: cover;
     width: 50px;
     height: 50px;
@@ -87,5 +89,17 @@ body {
     position: absolute;
     z-index: 2;
     pointer-events: none;
-    filter: blur(5px);
+    filter: blur(var(--dotBlur));
+}
+
+.AddPopUp{
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+    box-shadow: var(--bs);
+    z-index: 2;
+    position: relative;
+    top:530px;
+    width: 130px;
+    overflow: visible;
 }

@@ -6,13 +6,15 @@ var ctx = can.getContext('2d');
 
 var resultCanvas = document.getElementById('drawingResult');
 var resultCTX = resultCanvas.getContext('2d');
-
+resultCanvas.onselectstart = function () { return false; }
 
 var dotOffset = 30;
 var dotSize = 100;
+var root = document.documentElement;
 
 // some hotfixes... ( ≖_≖)
 document.body.style.margin = 0;
+
 
 // get canvas 2D context and set him correct size
 resize();
@@ -24,7 +26,7 @@ var pos = { x: 0, y: 0 };
 
 window.addEventListener('resize', resize);
 document.addEventListener('mousemove', draw);
-document.addEventListener('mousedown', setPosition);
+document.addEventListener('mousedown', debugPoint);
 document.addEventListener('mouseenter', setPosition);
 //document.addEventListener('mouseup', clearMask);
 
@@ -48,18 +50,21 @@ function resize() {
 
 // Add points to the mask based on GPS Marker
 function AddNewPointToMask(AllMarkerPositions, zoomLevel) {
-
+ 
+    newRadius = zoomLevel*0.05
+    //console.log(newRadius);
+    //console.log(dotSize * newRadius);
+    root.style.setProperty('--dotBlur', zoomLevel/2 + "px");
+    
     //clear old mask and create new one
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
     //adjust the radius based on zoom level (wip)
     //radius = (dotSize / zoomLevel);
-    //console.log(radius);
+   
 
     for (let i = 0; i < AllMarkerPositions.length; i++) {
         const element = AllMarkerPositions[i];
-
-
 
         const markerX = element[0];
         const markerY = element[1];
@@ -68,7 +73,7 @@ function AddNewPointToMask(AllMarkerPositions, zoomLevel) {
         offsettedY = markerY + dotOffset;
         //console.log(x , y);
 
-        ctx.lineWidth = dotSize;
+        ctx.lineWidth = dotSize * newRadius;
         ctx.lineCap = 'round';
         ctx.strokeStyle = 'white';
 
@@ -107,7 +112,7 @@ function setNewImgMask() {
     }
 
 
-    resultCanvas.onselectstart = function () { return false; }
+    
 
     // after the manipulation, reset the data
     image.data = imageData;
@@ -120,9 +125,9 @@ function clearMask() {
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
     resultCTX.clearRect(0, 0, resultCTX.canvas.width, resultCTX.canvas.height);
 
-    
     setNewImgMask();
 }
+
 
 setNewImgMask();
 
@@ -163,4 +168,8 @@ function draw(e) {
     ctx.stroke(); // draw it!
 
     setNewImgMask();
+}
+
+function debugPoint(e){
+
 }
